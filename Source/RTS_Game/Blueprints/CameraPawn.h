@@ -19,6 +19,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable)
+	void MouseX();
+
+	UFUNCTION(BlueprintCallable)
+	void MouseY();
+
+	UFUNCTION(BlueprintCallable)
+	void MouseWheelUp();
+
+	UFUNCTION(BlueprintCallable)
+	void MouseWheelDown();
+	
+private:
+	void UpdateDeltaLocationY(int32 Direction);
+
+	void UpdateDeltaLocationX(int32 Direction);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -26,4 +43,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ScrollSpeed = 600;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ZoomSpeed = 25;
 };
