@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "CameraPawn.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -14,16 +12,33 @@ ACameraPawn::ACameraPawn()
 void ACameraPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("CameraPawn"));
-	}
+	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 }
 
-void ACameraPawn::MouseX()
+// Called every frame
+void ACameraPawn::Tick(const float DeltaTime)
 {
-	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	Super::Tick(DeltaTime);
+}
 
+// Called to bind functionality to input
+void ACameraPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	// TODO: Use UE5 Enhanced Input plugin
+	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &ACameraPawn::MoveY);
+	PlayerInputComponent->BindAxis(TEXT("Backward"), this, &ACameraPawn::MoveY);
+	PlayerInputComponent->BindAxis(TEXT("Left"), this, &ACameraPawn::MoveX);
+	PlayerInputComponent->BindAxis(TEXT("Right"), this, &ACameraPawn::MoveX);
+
+	PlayerInputComponent->BindAxis(TEXT("MouseX"), this, &ACameraPawn::MouseX);
+	PlayerInputComponent->BindAxis(TEXT("MouseY"), this, &ACameraPawn::MouseY);
+	PlayerInputComponent->BindAxis(TEXT("Wheel"), this, &ACameraPawn::Wheel);
+}
+
+void ACameraPawn::MouseX(float AxisValue)
+{
 	float LocationX;
 	float LocationY;
 	if (!PlayerController->GetMousePosition(LocationX, LocationY))
@@ -44,10 +59,8 @@ void ACameraPawn::MouseX()
 	}
 }
 
-void ACameraPawn::MouseY()
+void ACameraPawn::MouseY(float AxisValue)
 {
-	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-
 	float LocationX;
 	float LocationY;
 	if (!PlayerController->GetMousePosition(LocationX, LocationY))
@@ -68,18 +81,10 @@ void ACameraPawn::MouseY()
 	}
 }
 
-void ACameraPawn::MouseWheelUp()
+void ACameraPawn::Wheel(const float AxisValue)
 {
 	FVector DeltaLocation = FVector::UnitZ();
-	DeltaLocation.Z = this->ZoomSpeed * -1;
-	this->AddActorLocalOffset(DeltaLocation);
-
-}
-
-void ACameraPawn::MouseWheelDown()
-{
-	FVector DeltaLocation = FVector::UnitZ();
-	DeltaLocation.Z = this->ZoomSpeed;
+	DeltaLocation.Z = this->ZoomSpeed * AxisValue * -1; // Invert mouse wheel
 	this->AddActorLocalOffset(DeltaLocation);
 }
 
@@ -97,14 +102,12 @@ void ACameraPawn::UpdateDeltaLocationX(const int32 Direction)
 	this->AddActorLocalOffset(DeltaLocation);
 }
 
-// Called every frame
-void ACameraPawn::Tick(const float DeltaTime)
+void ACameraPawn::MoveY(const float AxisValue)
 {
-	Super::Tick(DeltaTime);
+	UpdateDeltaLocationX(AxisValue);
 }
 
-// Called to bind functionality to input
-void ACameraPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACameraPawn::MoveX(const float AxisValue)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	UpdateDeltaLocationY(AxisValue);
 }

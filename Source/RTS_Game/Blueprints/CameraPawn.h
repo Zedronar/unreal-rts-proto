@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -15,33 +13,30 @@ public:
 	// Sets default values for this pawn's properties
 	ACameraPawn();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintCallable)
-	void MouseX();
-
-	UFUNCTION(BlueprintCallable)
-	void MouseY();
-
-	UFUNCTION(BlueprintCallable)
-	void MouseWheelUp();
-
-	UFUNCTION(BlueprintCallable)
-	void MouseWheelDown();
-	
-private:
-	void UpdateDeltaLocationY(int32 Direction);
-
-	void UpdateDeltaLocationX(int32 Direction);
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+private:
+	void MouseX(float AxisValue);
+
+	void MouseY(float AxisValue);
+
+	void Wheel(float AxisValue);
+
+	void MoveY(float AxisValue);
+
+	void MoveX(float AxisValue);
+
+	void UpdateDeltaLocationY(int32 Direction);
+
+	void UpdateDeltaLocationX(int32 Direction);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -49,4 +44,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ZoomSpeed = 25;
+
+private:
+	UPROPERTY()
+	const APlayerController* PlayerController;
 };
