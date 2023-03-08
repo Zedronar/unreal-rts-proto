@@ -58,4 +58,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AParentUnit> UnitBeingProduced;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
+	UTexture2D* Image2D;
+
+	// TODO: FromDataTable properties
 };
