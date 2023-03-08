@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "../Units/ParentUnit.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ParentBuilding.generated.h"
@@ -23,4 +25,37 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProductionTimerGranularity = 0.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProductionTimeNeeded = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProductionTimeSpent = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProductionProgress = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LevelUpTimeSpent = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LevelUpProgress = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxBuildingLevel = 2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsLevelingUp = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsProducingUnit = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TSubclassOf<AParentUnit>> UnitProductionQueue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AParentUnit> UnitBeingProduced;
 };

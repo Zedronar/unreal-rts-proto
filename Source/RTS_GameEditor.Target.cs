@@ -11,5 +11,7 @@ public class RTS_GameEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
 		ExtraModuleNames.AddRange( new string[] { "RTS_Game" } );
+		
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
 	}
 }
