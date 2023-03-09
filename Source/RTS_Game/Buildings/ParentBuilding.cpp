@@ -16,6 +16,18 @@ AParentBuilding::AParentBuilding()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BUILDINGS DATATABLE NOT FOUND"));
 		}
+
+		// TODO
+		// DataTable - Load
+		static ConstructorHelpers::FObjectFinder<UDataTable> UnitDataObject(TEXT("DataTable'/Game/Units/UnitsDataTable.UnitsDataTable'"));
+		if (UnitDataObject.Succeeded())
+		{
+			UnitData = UnitDataObject.Object;
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UNITS DATATABLE NOT FOUND"));
+		}
 	}
 }
 
@@ -65,6 +77,43 @@ bool AParentBuilding::IsProductionDone()
 	}
 
 	return false;
+}
+
+void AParentBuilding::StartProducingNextUnit()
+{
+	// Check if there are units in the queue
+	if (this->UnitProductionQueue.Num() == 0)
+	{
+		// No units in queue
+		return;
+	}
+
+	// Get the first unit in the queue
+	this->UnitBeingProduced = this->UnitProductionQueue[0];
+
+	TEnumAsByte EnumVar = UnitBeingProducedName;
+	FText MyEnumValueText;
+	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
+	FString StrUnitName =  MyEnumValueText.ToString();
+
+	// DataTable - Consume data
+	static const FString ContextString(StrUnitName);
+	if (const FUnit* UnitRowData = UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true))
+	{
+		// Get default build time from unit being produced
+		ProductionTimeNeeded = UnitRowData->BuildTime;
+
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DATATABLE ROW NOT FOUND"));
+	}
+
+	// Remove unit from queue
+	this->UnitProductionQueue.RemoveAt(0);
+
+	// Start production
+	this->IsProducingUnit = true;
 }
 
 void AParentBuilding::Tick(float DeltaTime)

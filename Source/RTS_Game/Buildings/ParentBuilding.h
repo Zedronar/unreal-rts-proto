@@ -22,11 +22,20 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	bool IsProductionDone();
 
+	UFUNCTION(BlueprintCallable)
+	void StartProducingNextUnit();
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	EBuildingNames BuildingName = EBuildingNames::CommandCenter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
+	int32 TeamNumber;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
+	FLinearColor TeamColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	float ProductionTimerGranularity = 0.1f;
@@ -61,6 +70,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AParentUnit> UnitBeingProduced;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EUnitNames UnitBeingProducedName = EUnitNames::ResourceTruck;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
 	UTexture2D* Image2D;
 
@@ -87,4 +99,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
 	UDataTable* BuildingData;
+
+	// TODO: Refactor and call unit to get this
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
+	UDataTable* UnitData;
 };
