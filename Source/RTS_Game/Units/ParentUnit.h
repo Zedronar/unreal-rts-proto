@@ -39,7 +39,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn="true"))
 	int32 Level = 1;
 
-	// TODO: MeshesForTeamColoring
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	TArray<UMeshComponent*> MeshesForTeamColoring;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FromDataTable", meta = (ExposeOnSpawn="true"))
 	float Speed = 0.0;

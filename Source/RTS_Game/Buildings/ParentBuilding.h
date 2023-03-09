@@ -86,5 +86,5 @@ public:
 	TArray<TSubclassOf<AParentUnit>> BuildableUnits;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
-	class UDataTable* BuildingData;
+	UDataTable* BuildingData;
 };
