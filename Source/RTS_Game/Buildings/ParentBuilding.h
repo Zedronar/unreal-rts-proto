@@ -1,10 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "../Units/ParentUnit.h"
 
 #include "CoreMinimal.h"
+#include "EBuildingNames.h"
 #include "GameFramework/Actor.h"
 #include "ParentBuilding.generated.h"
 
@@ -14,19 +13,19 @@ class RTS_GAME_API AParentBuilding : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AParentBuilding();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	EBuildingNames BuildingName = EBuildingNames::CommandCenter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	float ProductionTimerGranularity = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -44,7 +43,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float LevelUpProgress = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	int32 MaxBuildingLevel = 2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
