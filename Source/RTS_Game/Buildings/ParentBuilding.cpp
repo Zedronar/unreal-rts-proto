@@ -91,7 +91,8 @@ void AParentBuilding::StartProducingNextUnit()
 	// Get the first unit in the queue
 	this->UnitBeingProduced = this->UnitProductionQueue[0];
 
-	TEnumAsByte EnumVar = UnitBeingProducedName;
+	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
+	const TEnumAsByte EnumVar = DefaultSubclassObject->UnitName;
 	FText MyEnumValueText;
 	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
 	FString StrUnitName =  MyEnumValueText.ToString();

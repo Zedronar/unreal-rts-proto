@@ -70,9 +70,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AParentUnit> UnitBeingProduced;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EUnitNames UnitBeingProducedName = EUnitNames::ResourceTruck;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
 	UTexture2D* Image2D;
 
