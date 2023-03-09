@@ -19,10 +19,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable)
+	bool IsProductionDone();
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	EBuildingNames BuildingName = EBuildingNames::CommandCenter;
 

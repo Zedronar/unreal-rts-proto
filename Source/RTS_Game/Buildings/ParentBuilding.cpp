@@ -52,6 +52,20 @@ void AParentBuilding::BeginPlay()
 	}
 }
 
+bool AParentBuilding::IsProductionDone()
+{
+	// Update progress
+	this->ProductionTimeSpent += this->ProductionTimerGranularity;
+	this->ProductionProgress = this->ProductionTimeSpent / this->ProductionTimeNeeded;
+
+	if (this->ProductionProgress >= 1.0f)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void AParentBuilding::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
