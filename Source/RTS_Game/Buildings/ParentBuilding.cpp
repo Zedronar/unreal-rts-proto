@@ -60,6 +60,7 @@ bool AParentBuilding::IsProductionDone()
 
 	if (this->ProductionProgress >= 1.0f)
 	{
+		// Production complete
 		return true;
 	}
 

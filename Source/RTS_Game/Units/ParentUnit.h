@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UnitData.h"
+
 #include "CoreMinimal.h"
 #include "EUnitNames.h"
 #include "GameFramework/Character.h"
@@ -16,10 +18,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable)
+	void SetupTeamColor();
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
@@ -57,4 +61,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FromDataTable", meta = (ExposeOnSpawn="true"))
 	FString Description = "PLACEHOLDER";
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
+	UDataTable* UnitData;
 };
