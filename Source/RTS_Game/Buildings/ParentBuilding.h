@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Units/ParentUnit.h"
+#include "BuildingData.h"
 
 #include "CoreMinimal.h"
 #include "EBuildingNames.h"
@@ -81,4 +82,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FromDataTable", meta = (ExposeOnSpawn="true"))
 	TArray<TSubclassOf<AParentUnit>> BuildableUnits;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
+	class UDataTable* BuildingData;
 };

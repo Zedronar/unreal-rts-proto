@@ -5,6 +5,8 @@ public class RTS_Game : ModuleRules
     public RTS_Game(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        MinFilesUsingPrecompiledHeaderOverride = 1;
+        bUseUnity = false;
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
