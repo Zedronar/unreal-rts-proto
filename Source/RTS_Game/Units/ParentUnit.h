@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EUnitNames.h"
 #include "GameFramework/Character.h"
 #include "ParentUnit.generated.h"
 
@@ -21,7 +22,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	// TODO: TypeName
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	EUnitNames UnitName = EUnitNames::ResourceTruck;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	UTexture2D* Image2D;
@@ -31,10 +33,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default", meta = (ExposeOnSpawn="true"))
 	FLinearColor TeamColor;
-
-	// TODO: Am I using this one?
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
-	float ProductionTime = 0.0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn="true"))
 	int32 Level = 1;
