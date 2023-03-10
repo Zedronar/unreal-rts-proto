@@ -29,7 +29,14 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void StartProducingNextUnit();
 
-	
+	UFUNCTION(BlueprintCallable)
+	void StartLevelUp(int32 PlayerResourceAmount);
+
+	UFUNCTION(BlueprintCallable)
+	void LevelUpTick();
+
+	UFUNCTION(BlueprintCallable)
+	void SetupTeamColor(UStaticMeshComponent* StaticMeshComponent);
 
 public:	
 	virtual void Tick(float DeltaTime) override;

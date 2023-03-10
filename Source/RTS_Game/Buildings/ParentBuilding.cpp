@@ -117,6 +117,7 @@ void AParentBuilding::StartProducingNextUnit()
 	this->IsProducingUnit = true;
 }
 
+// TODO: Move to parent unit
 void AParentBuilding::SpawnUnit(UBoxComponent* UnitSpawnPoint)
 {
 	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
@@ -135,7 +136,12 @@ void AParentBuilding::SpawnUnit(UBoxComponent* UnitSpawnPoint)
 	}
 
 	// Spawn unit
-	AParentUnit* NewUnit = GetWorld()->SpawnActorDeferred<AParentUnit>(UnitBeingProduced, UnitSpawnPoint->GetComponentTransform());
+	AParentUnit* NewUnit = GetWorld()->SpawnActorDeferred<AParentUnit>(
+		UnitBeingProduced,
+		UnitSpawnPoint->GetComponentTransform(),
+		this,
+		nullptr,
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 	NewUnit->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
 	NewUnit->TeamNumber = this->TeamNumber;
 	NewUnit->TeamColor = this->TeamColor;
@@ -155,7 +161,63 @@ void AParentBuilding::SpawnUnit(UBoxComponent* UnitSpawnPoint)
 	this->UnitBeingProduced = nullptr;
 }
 
+void AParentBuilding::StartLevelUp(const int32 PlayerResourceAmount)
+{
+	if (this->Level >= this->MaxBuildingLevel)
+	{
+		// Building is already at max level
+		return;
+	}
+
+	if (PlayerResourceAmount < this->LevelUpCost)
+	{
+		// Player does not have enough resources
+		return;
+	}
+
+	// Start level up
+	this->IsLevelingUp = true;
+}
+
+void AParentBuilding::LevelUpTick()
+{
+	if (!this->IsLevelingUp)
+	{
+		return;
+	}
+
+	// Update progress
+	this->LevelUpTimeSpent += this->ProductionTimerGranularity;
+	this->LevelUpProgress = this->LevelUpTimeSpent / this->LevelUpTimeNeeded;
+
+	if (this->LevelUpProgress < 1.0f)
+	{
+		// Still leveling up
+		return;
+	}
+
+	// Level up complete
+	this->Level += 1;
+	this->LevelUpProgress = 0;
+	this->LevelUpTimeSpent= 0;
+	this->IsLevelingUp = false;
+}
+
 void AParentBuilding::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AParentBuilding::SetupTeamColor(UStaticMeshComponent* StaticMeshComponent)
+{
+	UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
+	if (Material != nullptr)
+	{
+		UMaterialInstanceDynamic* MaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
+		if (MaterialInstance != nullptr)
+		{
+			MaterialInstance->SetVectorParameterValue("TeamColor", TeamColor);
+			StaticMeshComponent->SetMaterial(0, MaterialInstance);
+		}
+	}
 }
