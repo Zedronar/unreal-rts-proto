@@ -1,5 +1,6 @@
 #include "ParentBuilding.h"
 
+
 AParentBuilding::AParentBuilding()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -64,7 +65,7 @@ void AParentBuilding::BeginPlay()
 	}
 }
 
-bool AParentBuilding::IsProductionDone()
+bool AParentBuilding::IsUnitProductionComplete()
 {
 	// Update progress
 	this->ProductionTimeSpent += this->ProductionTimerGranularity;
@@ -72,7 +73,7 @@ bool AParentBuilding::IsProductionDone()
 
 	if (this->ProductionProgress >= 1.0f)
 	{
-		// Production complete
+		// Production complete		
 		return true;
 	}
 
@@ -103,7 +104,6 @@ void AParentBuilding::StartProducingNextUnit()
 	{
 		// Get default build time from unit being produced
 		ProductionTimeNeeded = UnitRowData->BuildTime;
-
 	}
 	else
 	{
@@ -115,6 +115,44 @@ void AParentBuilding::StartProducingNextUnit()
 
 	// Start production
 	this->IsProducingUnit = true;
+}
+
+void AParentBuilding::SpawnUnit(UBoxComponent* UnitSpawnPoint)
+{
+	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
+	const TEnumAsByte EnumVar = DefaultSubclassObject->UnitName;
+	FText MyEnumValueText;
+	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
+	FString StrUnitName =  MyEnumValueText.ToString();
+
+	// DataTable - Consume data
+	static const FString ContextString(StrUnitName);
+	const FUnit* UnitRowData = UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
+	if (!UnitRowData)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DATATABLE ROW NOT FOUND"));
+		return;
+	}
+
+	// Spawn unit
+	AParentUnit* NewUnit = GetWorld()->SpawnActorDeferred<AParentUnit>(UnitBeingProduced, UnitSpawnPoint->GetComponentTransform());
+	NewUnit->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
+	NewUnit->TeamNumber = this->TeamNumber;
+	NewUnit->TeamColor = this->TeamColor;
+	NewUnit->Level = this->Level; // Building level is carried over to units
+	NewUnit->Speed = UnitRowData->Speed;
+	NewUnit->Cost = UnitRowData->Cost;
+	NewUnit->BuildTime = UnitRowData->BuildTime;
+	NewUnit->Health = UnitRowData->Health;
+	NewUnit->Damage = UnitRowData->Damage;
+	NewUnit->Description = UnitRowData->Description;
+	NewUnit->FinishSpawning(UnitSpawnPoint->GetComponentTransform());
+
+	// Reset production
+	this->IsProducingUnit = false;
+	this->ProductionProgress = 0.0f;
+	this->ProductionTimeSpent = 0.0f;
+	this->UnitBeingProduced = nullptr;
 }
 
 void AParentBuilding::Tick(float DeltaTime)

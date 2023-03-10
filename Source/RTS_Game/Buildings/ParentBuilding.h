@@ -3,6 +3,7 @@
 #include "../Units/ParentUnit.h"
 #include "BuildingData.h"
 
+#include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
 #include "EBuildingNames.h"
 #include "GameFramework/Actor.h"
@@ -20,10 +21,15 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	bool IsProductionDone();
+	bool IsUnitProductionComplete();
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnUnit(UBoxComponent* UnitSpawnPoint);
 
 	UFUNCTION(BlueprintCallable)
 	void StartProducingNextUnit();
+
+	
 
 public:	
 	virtual void Tick(float DeltaTime) override;
