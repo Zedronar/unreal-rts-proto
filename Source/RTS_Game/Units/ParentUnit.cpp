@@ -19,11 +19,8 @@ AParentUnit::AParentUnit()
 	}
 }
 
-void AParentUnit::BeginPlay()
+bool AParentUnit::GetUnitRowData(const FUnit*& UnitRowData) const
 {
-	Super::BeginPlay();
-
-	// TODO - Refactor to function
 	TEnumAsByte EnumVar = this->UnitName;
 	FText MyEnumValueText;
 	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
@@ -36,18 +33,28 @@ void AParentUnit::BeginPlay()
 
 	// DataTable - Consume data
 	static const FString ContextString(StrUnitName);
-	if (const FUnit* UnitRowData = UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true))
-	{
-		this->Speed = UnitRowData->Speed;		this->Cost = UnitRowData->Cost;
-		this->BuildTime = UnitRowData->BuildTime;
-		this->Health = UnitRowData->Health;
-		this->Damage = UnitRowData->Damage;
-		this->Description = UnitRowData->Description;
-	}
-	else
+	UnitRowData = UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
+	if (!UnitRowData)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DATATABLE ROW NOT FOUND"));
+		return true;
 	}
+	return false;
+}
+
+void AParentUnit::BeginPlay()
+{
+	Super::BeginPlay();
+
+	const FUnit* UnitRowData;
+	if (GetUnitRowData(UnitRowData)) return;
+
+	this->Speed = UnitRowData->Speed;
+	this->Cost = UnitRowData->Cost;
+	this->BuildTime = UnitRowData->BuildTime;
+	this->Health = UnitRowData->Health;
+	this->Damage = UnitRowData->Damage;
+	this->Description = UnitRowData->Description;
 }
 
 void AParentUnit::Tick(float DeltaTime)

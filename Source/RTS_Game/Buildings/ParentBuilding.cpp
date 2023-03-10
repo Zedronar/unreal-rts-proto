@@ -18,8 +18,6 @@ AParentBuilding::AParentBuilding()
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BUILDINGS DATATABLE NOT FOUND"));
 		}
 
-		// TODO
-		// DataTable - Load
 		static ConstructorHelpers::FObjectFinder<UDataTable> UnitDataObject(TEXT("DataTable'/Game/Units/UnitsDataTable.UnitsDataTable'"));
 		if (UnitDataObject.Succeeded())
 		{
@@ -36,33 +34,17 @@ void AParentBuilding::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// TODO - Refactor to function
-	TEnumAsByte EnumVar = this->BuildingName;
-	FText MyEnumValueText;
-	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
-	FString StrBuildingName =  MyEnumValueText.ToString();
+	const FBuilding* BuildingRowData;
+	if (!GetBuildingRowData(BuildingRowData))
+		return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("ParentBuilding - " + StrBuildingName));
-	}
-
-	// DataTable - Consume data
-	static const FString ContextString(StrBuildingName);
-	if (const FBuilding* BuildingRowData = BuildingData->FindRow<FBuilding>(FName(StrBuildingName), ContextString, true))
-	{
-		this->Cost = BuildingRowData->Cost;
-		this->BuildTime = BuildingRowData->BuildTime;
-		this->Health = BuildingRowData->Health;
-		this->Level = BuildingRowData->InitialLevel;
-		this->LevelUpCost = BuildingRowData->LevelUpCost;
-		this->LevelUpTimeNeeded = BuildingRowData->LevelUpTime;
-		this->BuildableUnits = BuildingRowData->BuildableUnits;
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DATATABLE ROW NOT FOUND"));
-	}
+	this->Cost = BuildingRowData->Cost;
+	this->BuildTime = BuildingRowData->BuildTime;
+	this->Health = BuildingRowData->Health;
+	this->Level = BuildingRowData->InitialLevel;
+	this->LevelUpCost = BuildingRowData->LevelUpCost;
+	this->LevelUpTimeNeeded = BuildingRowData->LevelUpTime;
+	this->BuildableUnits = BuildingRowData->BuildableUnits;
 }
 
 bool AParentBuilding::IsUnitProductionComplete()
@@ -92,23 +74,12 @@ void AParentBuilding::StartProducingNextUnit()
 	// Get the first unit in the queue
 	this->UnitBeingProduced = this->UnitProductionQueue[0];
 
-	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
-	const TEnumAsByte EnumVar = DefaultSubclassObject->UnitName;
-	FText MyEnumValueText;
-	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
-	FString StrUnitName =  MyEnumValueText.ToString();
-
-	// DataTable - Consume data
-	static const FString ContextString(StrUnitName);
-	if (const FUnit* UnitRowData = UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true))
-	{
-		// Get default build time from unit being produced
-		ProductionTimeNeeded = UnitRowData->BuildTime;
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DATATABLE ROW NOT FOUND"));
-	}
+	const FUnit* UnitRowData;
+	if (!GetUnitRowData(UnitRowData))
+		return;
+	
+	// Get default build time from unit being produced
+	ProductionTimeNeeded = UnitRowData->BuildTime;
 
 	// Remove unit from queue
 	this->UnitProductionQueue.RemoveAt(0);
@@ -117,23 +88,11 @@ void AParentBuilding::StartProducingNextUnit()
 	this->IsProducingUnit = true;
 }
 
-// TODO: Move to parent unit
 void AParentBuilding::SpawnUnit(UBoxComponent* UnitSpawnPoint)
 {
-	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
-	const TEnumAsByte EnumVar = DefaultSubclassObject->UnitName;
-	FText MyEnumValueText;
-	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
-	FString StrUnitName =  MyEnumValueText.ToString();
-
-	// DataTable - Consume data
-	static const FString ContextString(StrUnitName);
-	const FUnit* UnitRowData = UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
-	if (!UnitRowData)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DATATABLE ROW NOT FOUND"));
+	const FUnit* UnitRowData;
+	if (!GetUnitRowData(UnitRowData))
 		return;
-	}
 
 	// Spawn unit
 	AParentUnit* NewUnit = GetWorld()->SpawnActorDeferred<AParentUnit>(
@@ -220,4 +179,49 @@ void AParentBuilding::SetupTeamColor(UStaticMeshComponent* StaticMeshComponent)
 			StaticMeshComponent->SetMaterial(0, MaterialInstance);
 		}
 	}
+}
+
+bool AParentBuilding::GetBuildingRowData(const FBuilding*& BuildingRowData) const
+{
+	TEnumAsByte EnumVar = this->BuildingName;
+	FText MyEnumValueText;
+	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
+	FString StrBuildingName =  MyEnumValueText.ToString();
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("ParentBuilding - " + StrBuildingName));
+	}
+
+	// DataTable - Consume data
+	static const FString ContextString(StrBuildingName);
+	BuildingRowData = BuildingData->FindRow<FBuilding>(FName(StrBuildingName), ContextString, true);
+	if (!BuildingRowData)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BUILDINGS DATATABLE ROW NOT FOUND"));
+		return false;
+	}
+
+	return true;
+}
+
+bool AParentBuilding::GetUnitRowData(const FUnit*& UnitRowData) const
+{
+	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
+
+	const TEnumAsByte EnumVar = DefaultSubclassObject->UnitName;
+	FText MyEnumValueText;
+	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
+	FString StrUnitName =  MyEnumValueText.ToString();
+
+	// DataTable - Consume data
+	static const FString ContextString(StrUnitName);
+	UnitRowData = UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
+	if (!UnitRowData)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UNITS DATATABLE ROW NOT FOUND"));
+		return false;
+	}
+
+	return true;
 }

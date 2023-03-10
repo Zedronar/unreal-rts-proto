@@ -17,6 +17,8 @@ class RTS_GAME_API AParentBuilding : public AActor
 public:	
 	AParentBuilding();
 
+	virtual void Tick(float DeltaTime) override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -38,9 +40,12 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetupTeamColor(UStaticMeshComponent* StaticMeshComponent);
 
-public:	
-	virtual void Tick(float DeltaTime) override;
+private:
+	bool GetBuildingRowData(const FBuilding*& BuildingRowData) const;
 
+	bool GetUnitRowData(const FUnit*& UnitRowData) const;
+
+public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	EBuildingNames BuildingName = EBuildingNames::CommandCenter;
 

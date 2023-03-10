@@ -14,16 +14,18 @@ class RTS_GAME_API AParentUnit : public ACharacter
 
 public:
 	AParentUnit();
+	
+	virtual void Tick(float DeltaTime) override;
 
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
 	void SetupTeamColor();
-public:	
-	virtual void Tick(float DeltaTime) override;
 
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+private:
+	bool GetUnitRowData(const FUnit*& UnitRowData) const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
