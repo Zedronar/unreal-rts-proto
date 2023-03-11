@@ -174,6 +174,11 @@ void AParentBuilding::SetupTeamColor(UStaticMeshComponent* StaticMeshComponent)
 	}
 }
 
+void AParentBuilding::AddUnitToQueue2(TSubclassOf<AParentUnit> Unit)
+{
+	this->UnitProductionQueue.Add(Unit);
+}
+
 FBuilding* AParentBuilding::GetBuildingRowData() const
 {
 	const TEnumAsByte EnumVar = this->BuildingName;

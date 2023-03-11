@@ -2,6 +2,7 @@
 
 #include "../Buildings/ParentBuilding.h"
 #include "../Buildings/BuildingData.h"
+#include "I_RTS.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
@@ -11,12 +12,18 @@
  *
  */
 UCLASS()
-class RTS_GAME_API ARTS_PlayerController : public APlayerController
+class RTS_GAME_API ARTS_PlayerController : public APlayerController, public II_RTS
 {
 	GENERATED_BODY()
 
 public:
 	ARTS_PlayerController();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void IncrementResourceAmount(const int32 Amount);
+
+	/*UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void ProduceUnit() override;*/
 
 protected:
 	UFUNCTION(BlueprintCallable)

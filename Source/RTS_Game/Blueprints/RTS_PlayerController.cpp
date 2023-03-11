@@ -19,6 +19,16 @@ ARTS_PlayerController::ARTS_PlayerController()
 	}
 }
 
+void ARTS_PlayerController::IncrementResourceAmount_Implementation(const int32 Amount)
+{
+	this->ResourceAmount += Amount;
+}
+
+//void ARTS_PlayerController::ProduceUnit_Implementation()
+//{
+//	// TODO
+//}
+
 void ARTS_PlayerController::ConstructBuilding_Implementation(TSubclassOf<AParentBuilding> Building)
 {
 	this->IsConstructingBuilding = true;
@@ -44,29 +54,6 @@ void ARTS_PlayerController::GetNewBuildingTransform(const UBoxComponent* Startin
 		StartingBuildingSpawnPoint->GetComponentRotation(),
 		*NewTransformLocation
 	);
-}
-
-void ARTS_PlayerController::SpawnBuilding(const FTransform* NewTransform)
-{
-	const AParentBuilding* DefaultSubclassObject = Cast<AParentBuilding>(BuildingBeingConstructed->GetDefaultObject(true));
-	const FBuilding* BuildingRowData = GetBuildingRowData(DefaultSubclassObject->BuildingName);
-	AParentBuilding* NewBuilding = GetWorld()->SpawnActorDeferred<AParentBuilding>(
-		this->BuildingBeingConstructed,
-		*NewTransform,
-		this,
-		nullptr,
-		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-	NewBuilding->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
-	NewBuilding->TeamNumber = this->TeamNumber;
-	NewBuilding->TeamColor = this->TeamColor;
-	NewBuilding->Cost = BuildingRowData->Cost;
-	NewBuilding->BuildTime = BuildingRowData->BuildTime;
-	NewBuilding->Health = BuildingRowData->Health;
-	NewBuilding->Level = BuildingRowData->InitialLevel;
-	NewBuilding->LevelUpCost = BuildingRowData->LevelUpCost;
-	NewBuilding->LevelUpTimeNeeded = BuildingRowData->LevelUpTime;
-	NewBuilding->BuildableUnits = BuildingRowData->BuildableUnits;
-	NewBuilding->FinishSpawning(*NewTransform);
 }
 
 void ARTS_PlayerController::ConstructBuildingTick(UBoxComponent* StartingBuildingSpawnPoint)
@@ -124,4 +111,27 @@ float ARTS_PlayerController::GetRandomFloatWithGap() const
 	const int Index = FMath::RandRange(0, 1);
 	const float RandomFloat = Choices[Index];
 	return RandomFloat;
+}
+
+void ARTS_PlayerController::SpawnBuilding(const FTransform* NewTransform)
+{
+	const AParentBuilding* DefaultSubclassObject = Cast<AParentBuilding>(BuildingBeingConstructed->GetDefaultObject(true));
+	const FBuilding* BuildingRowData = GetBuildingRowData(DefaultSubclassObject->BuildingName);
+	AParentBuilding* NewBuilding = GetWorld()->SpawnActorDeferred<AParentBuilding>(
+		this->BuildingBeingConstructed,
+		*NewTransform,
+		this,
+		nullptr,
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+	NewBuilding->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
+	NewBuilding->TeamNumber = this->TeamNumber;
+	NewBuilding->TeamColor = this->TeamColor;
+	NewBuilding->Cost = BuildingRowData->Cost;
+	NewBuilding->BuildTime = BuildingRowData->BuildTime;
+	NewBuilding->Health = BuildingRowData->Health;
+	NewBuilding->Level = BuildingRowData->InitialLevel;
+	NewBuilding->LevelUpCost = BuildingRowData->LevelUpCost;
+	NewBuilding->LevelUpTimeNeeded = BuildingRowData->LevelUpTime;
+	NewBuilding->BuildableUnits = BuildingRowData->BuildableUnits;
+	NewBuilding->FinishSpawning(*NewTransform);
 }

@@ -40,6 +40,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetupTeamColor(UStaticMeshComponent* StaticMeshComponent);
 
+	UFUNCTION(BlueprintCallable)
+	void AddUnitToQueue2(TSubclassOf<AParentUnit> Unit);
+
 private:
 	FBuilding* GetBuildingRowData() const;
 
