@@ -174,7 +174,7 @@ void AParentBuilding::SetupTeamColor(UStaticMeshComponent* StaticMeshComponent)
 	}
 }
 
-void AParentBuilding::AddUnitToQueue2(TSubclassOf<AParentUnit> Unit)
+void AParentBuilding::AddUnitToQueue(TSubclassOf<AParentUnit> Unit)
 {
 	this->UnitProductionQueue.Add(Unit);
 }

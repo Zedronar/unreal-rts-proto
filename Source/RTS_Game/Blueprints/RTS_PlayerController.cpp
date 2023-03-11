@@ -16,6 +16,59 @@ ARTS_PlayerController::ARTS_PlayerController()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BUILDINGS DATATABLE NOT FOUND"));
 		}
+
+		static ConstructorHelpers::FObjectFinder<UDataTable> UnitDataObject(TEXT("DataTable'/Game/Units/UnitsDataTable.UnitsDataTable'"));
+		if (UnitDataObject.Succeeded())
+		{
+			UnitData = UnitDataObject.Object;
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UNITS DATATABLE NOT FOUND"));
+		}
+	}
+}
+
+bool ARTS_PlayerController::DeductResourceCost2(const int32 Cost)
+{
+	if (this->ResourceAmount >= Cost)
+	{
+		this->ResourceAmount -= Cost;
+		return true;
+	}
+
+	return false;
+}
+
+void ARTS_PlayerController::ServerAddUnitToQueue_Implementation(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit)
+{
+	ServerAddUnitToQueueNetwork_Implementation(Building, Unit);
+}
+
+void ARTS_PlayerController::ServerAddUnitToQueueNetwork_Implementation(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit)
+{
+	// Deduct cost
+	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(Unit->GetDefaultObject(true));
+	const FUnit* UnitRowData = GetUnitRowData(DefaultSubclassObject->UnitName);
+
+	bool Deducted = DeductResourceCost2(UnitRowData->Cost);
+	if (!Deducted)
+	{
+		Execute_ClientShowNotEnoughResources(this);
+		return;
+	}
+
+	// Add unit to queue
+	Building->AddUnitToQueue(Unit);
+}
+
+void ARTS_PlayerController::ReduceResourceAmount_Implementation(const int32 Amount)
+{
+	bool Deducted = DeductResourceCost2(Amount);
+	if (!Deducted)
+	{
+		Execute_ClientShowNotEnoughResources(this);
+		return;
 	}
 }
 
@@ -23,11 +76,6 @@ void ARTS_PlayerController::IncrementResourceAmount_Implementation(const int32 A
 {
 	this->ResourceAmount += Amount;
 }
-
-//void ARTS_PlayerController::ProduceUnit_Implementation()
-//{
-//	// TODO
-//}
 
 void ARTS_PlayerController::ConstructBuilding_Implementation(TSubclassOf<AParentBuilding> Building)
 {
@@ -101,6 +149,18 @@ FBuilding* ARTS_PlayerController::GetBuildingRowData(EBuildingNames BuildingName
 	// DataTable - Read data
 	static const FString ContextString(StrBuildingName);
 	return BuildingData->FindRow<FBuilding>(FName(StrBuildingName), ContextString, true);
+}
+
+FUnit* ARTS_PlayerController::GetUnitRowData(EUnitNames UnitName) const
+{
+	const TEnumAsByte EnumVar = UnitName;
+	FText MyEnumValueText;
+	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
+	FString StrUnitName =  MyEnumValueText.ToString();
+
+	// DataTable - Read data
+	static const FString ContextString(StrUnitName);
+	return UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
 }
 
 float ARTS_PlayerController::GetRandomFloatWithGap() const

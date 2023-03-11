@@ -19,6 +19,9 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	void AddUnitToQueue(TSubclassOf<AParentUnit> Unit);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -39,9 +42,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SetupTeamColor(UStaticMeshComponent* StaticMeshComponent);
-
-	UFUNCTION(BlueprintCallable)
-	void AddUnitToQueue2(TSubclassOf<AParentUnit> Unit);
 
 private:
 	FBuilding* GetBuildingRowData() const;
@@ -118,7 +118,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
 	UDataTable* BuildingData;
 
-	// TODO: Refactor and call unit to get this
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
 	UDataTable* UnitData;
 };

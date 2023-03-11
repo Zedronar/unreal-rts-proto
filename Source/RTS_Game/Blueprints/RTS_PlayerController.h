@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Units/ParentUnit.h"
+#include "../Buildings/BuildingData.h"
 #include "../Buildings/ParentBuilding.h"
 #include "../Buildings/BuildingData.h"
 #include "I_RTS.h"
@@ -20,10 +22,15 @@ public:
 	ARTS_PlayerController();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void IncrementResourceAmount(const int32 Amount);
+	void ReduceResourceAmount(const int32 Amount);
 
-	/*UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void ProduceUnit() override;*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void IncrementResourceAmount(const int32 Amount);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void ServerAddUnitToQueue(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit);
+	UFUNCTION(Server, Reliable)
+	void ServerAddUnitToQueueNetwork(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit);
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -33,7 +40,11 @@ protected:
 	void ConstructBuildingTick(UBoxComponent* StartingBuildingSpawnPoint);
 
 private:
+	bool DeductResourceCost2(const int32 Cost);
+
 	FBuilding* GetBuildingRowData(EBuildingNames BuildingName) const;
+
+	FUnit* GetUnitRowData(EUnitNames UnitName) const;
 
 	float GetRandomFloatWithGap() const;
 
@@ -64,6 +75,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
 	UDataTable* BuildingData;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
+	UDataTable* UnitData;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	int32 ResourceAmount = 0;
