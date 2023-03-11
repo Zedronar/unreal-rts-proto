@@ -30,9 +30,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ClientShowNotEnoughResources();
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void StartBuildingConstruction(TSubclassOf<AParentBuilding> Building);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ServerAddUnitToQueue(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit);

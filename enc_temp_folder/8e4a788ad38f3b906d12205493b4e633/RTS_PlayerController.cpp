@@ -29,7 +29,7 @@ ARTS_PlayerController::ARTS_PlayerController()
 	}
 }
 
-bool ARTS_PlayerController::DeductResourceCost(const int32 Cost)
+bool ARTS_PlayerController::DeductResourceCost2(const int32 Cost)
 {
 	if (this->ResourceAmount >= Cost)
 	{
@@ -51,7 +51,7 @@ void ARTS_PlayerController::ServerAddUnitToQueueNetwork_Implementation(AParentBu
 	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(Unit->GetDefaultObject(true));
 	const FUnit* UnitRowData = GetUnitRowData(DefaultSubclassObject->UnitName);
 
-	bool Deducted = DeductResourceCost(UnitRowData->Cost);
+	bool Deducted = DeductResourceCost2(UnitRowData->Cost);
 	if (!Deducted)
 	{
 		Execute_ClientShowNotEnoughResources(this);
@@ -64,7 +64,7 @@ void ARTS_PlayerController::ServerAddUnitToQueueNetwork_Implementation(AParentBu
 
 void ARTS_PlayerController::ReduceResourceAmount_Implementation(const int32 Amount)
 {
-	bool Deducted = DeductResourceCost(Amount);
+	bool Deducted = DeductResourceCost2(Amount);
 	if (!Deducted)
 	{
 		Execute_ClientShowNotEnoughResources(this);
@@ -77,7 +77,7 @@ void ARTS_PlayerController::IncrementResourceAmount_Implementation(const int32 A
 	this->ResourceAmount += Amount;
 }
 
-void ARTS_PlayerController::StartBuildingConstruction_Implementation(TSubclassOf<AParentBuilding> Building)
+void ARTS_PlayerController::StartBuildingConstruction(TSubclassOf<AParentBuilding> Building)
 {
 	if (this->IsConstructingBuilding)
 	{
@@ -88,7 +88,7 @@ void ARTS_PlayerController::StartBuildingConstruction_Implementation(TSubclassOf
 	const AParentBuilding* DefaultSubclassObject = Cast<AParentBuilding>(Building->GetDefaultObject(true));
 	const FBuilding* BuildingRowData = GetBuildingRowData(DefaultSubclassObject->BuildingName);
 
-	bool Deducted = DeductResourceCost(BuildingRowData->Cost);
+	bool Deducted = DeductResourceCost2(BuildingRowData->Cost);
 	if (!Deducted)
 	{
 		Execute_ClientShowNotEnoughResources(this);

@@ -32,7 +32,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerAddUnitToQueueNetwork(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable)
 	void StartBuildingConstruction(TSubclassOf<AParentBuilding> Building);
 
 protected:
@@ -40,7 +40,7 @@ protected:
 	void ConstructBuildingTick(UBoxComponent* StartingBuildingSpawnPoint);
 
 private:
-	bool DeductResourceCost(const int32 Cost);
+	bool DeductResourceCost2(const int32 Cost);
 
 	FBuilding* GetBuildingRowData(EBuildingNames BuildingName) const;
 
