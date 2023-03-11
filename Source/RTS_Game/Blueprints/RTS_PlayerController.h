@@ -15,6 +15,25 @@ class RTS_GAME_API ARTS_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+public:
+	ARTS_PlayerController();
+
+protected:
+	UFUNCTION(BlueprintCallable)
+	void ConstructBuilding_Implementation(TSubclassOf<AParentBuilding> Building);
+
+	UFUNCTION(BlueprintCallable)
+	void ConstructBuildingTick(UBoxComponent* StartingBuildingSpawnPoint);
+
+private:
+	FBuilding* GetBuildingRowData(EBuildingNames BuildingName) const;
+
+	float GetRandomFloatWithGap() const;
+
+	void GetNewBuildingTransform(const UBoxComponent* StartingBuildingSpawnPoint, const FTransform*& NewTransform) const;
+
+	void SpawnBuilding(const FTransform* NewTransform);
+
 protected:
 	#pragma region BuildingConstruction
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building Construction")
@@ -36,6 +55,12 @@ protected:
 	TSubclassOf<AParentBuilding> BuildingBeingConstructed;
 	#pragma endregion BuildingConstruction
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
+	UDataTable* BuildingData;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	int32 ResourceAmount = 0;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor TeamColor;
 
@@ -47,9 +72,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector RightClickLocation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ResourceAmount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AParentBuilding* SelectedBuilding;

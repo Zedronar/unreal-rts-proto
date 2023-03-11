@@ -41,9 +41,9 @@ protected:
 	void SetupTeamColor(UStaticMeshComponent* StaticMeshComponent);
 
 private:
-	bool GetBuildingRowData(const FBuilding*& BuildingRowData) const;
+	FBuilding* GetBuildingRowData() const;
 
-	bool GetUnitRowData(const FUnit*& UnitRowData) const;
+	FUnit* GetUnitRowData() const;
 
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
@@ -112,10 +112,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FromDataTable", meta = (ExposeOnSpawn="true"))
 	TArray<TSubclassOf<AParentUnit>> BuildableUnits;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
 	UDataTable* BuildingData;
 
 	// TODO: Refactor and call unit to get this
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
 	UDataTable* UnitData;
 };

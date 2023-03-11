@@ -31,7 +31,7 @@ bool AParentUnit::GetUnitRowData(const FUnit*& UnitRowData) const
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("ParentUnit - " + StrUnitName));
 	}
 
-	// DataTable - Consume data
+	// DataTable - Read data
 	static const FString ContextString(StrUnitName);
 	UnitRowData = UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
 	if (!UnitRowData)
