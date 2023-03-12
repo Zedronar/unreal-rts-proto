@@ -29,6 +29,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ServerAddUnitToQueue(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit);
+
 	UFUNCTION(Server, Reliable)
 	void ServerAddUnitToQueueNetwork(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit);
 
@@ -47,9 +48,11 @@ private:
 
 	float GetRandomFloatWithGap() const;
 
-	void GetNewBuildingTransform(const UBoxComponent* StartingBuildingSpawnPoint, const FTransform*& NewTransform) const;
+	FTransform GetNewBuildingTransform(const UBoxComponent* StartingBuildingSpawnPoint) const;
 
-	void SpawnBuilding(const FTransform* NewTransform);
+	void SpawnBuilding(const FTransform Transform, const TSubclassOf<AParentBuilding> Subclass);
+
+	void SpawnUnit(const FTransform Transform, const TSubclassOf<AParentUnit> Subclass, int32 StartingUnitLevel);
 
 protected:
 	#pragma region BuildingConstruction
@@ -73,7 +76,7 @@ protected:
 	#pragma endregion BuildingConstruction
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
-	int32 ResourceAmount = 1000; // For testing purposes
+	int32 ResourceAmount = 200; // For testing purposes
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor TeamColor;
@@ -89,6 +92,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AParentBuilding* SelectedBuilding;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AParentBuilding> InitialBuildingClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AParentUnit> InitialUnitClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	APlayerStartCamp* StartCamp;
 
 private:
 	UPROPERTY()

@@ -18,17 +18,27 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
-public:	
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBoxComponent* UnitStartA;
+	UBoxComponent* CameraLocationStart;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBoxComponent* UnitStartB;
+	UBoxComponent* BuildingLocationStart;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBoxComponent* UnitStartC;
+	TArray<UBoxComponent*> StartingUnits;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USceneComponent* Root;
+
+private:
+    UPROPERTY()
+    UBoxComponent* UnitStartA;
+
+	UPROPERTY()
+	UBoxComponent* UnitStartB;
+
+	UPROPERTY()
+	UBoxComponent* UnitStartC;
 };
