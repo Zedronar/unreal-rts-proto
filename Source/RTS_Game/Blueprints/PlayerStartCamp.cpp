@@ -22,7 +22,7 @@ APlayerStartCamp::APlayerStartCamp()
 	StartingUnits = { UnitStartA, UnitStartB, UnitStartC };
 
 	CameraLocationStart = CreateDefaultSubobject<UBoxComponent>(TEXT("CameraLocationStart"));
-	CameraLocationStart->SetRelativeLocation(FVector(90.0f, 0.0f, 560.0f));
+	CameraLocationStart->SetRelativeLocation(FVector(-200.0f, 0.0f, 960.0f));
 	CameraLocationStart->SetupAttachment(Root);
 	
 	BuildingLocationStart = CreateDefaultSubobject<UBoxComponent>(TEXT("BuildingLocationStart"));
