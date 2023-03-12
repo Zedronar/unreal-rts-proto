@@ -10,7 +10,7 @@ AParentUnit::AParentUnit()
 	}
 }
 
-void AParentUnit::Init(TSubclassOf<AParentUnit> Subclass, FTransform Transform, int32 ParentTeamNumber, FLinearColor ParentTeamColor, int32 StartingLevel)
+void AParentUnit::Initialize(TSubclassOf<AParentUnit> Subclass, FTransform Transform, int32 ParentTeamNumber, FLinearColor ParentTeamColor, int32 StartingLevel)
 {
 	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(Subclass->GetDefaultObject(true));
 	const FUnit* UnitRowData = DataTableSubsystem->GetRowData(DefaultSubclassObject->UnitName);

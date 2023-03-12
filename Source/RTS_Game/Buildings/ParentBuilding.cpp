@@ -10,7 +10,7 @@ AParentBuilding::AParentBuilding()
 	}
 }
 
-void AParentBuilding::Init(TSubclassOf<AParentBuilding> Subclass, FTransform Transform, int32 ParentTeamNumber, FLinearColor ParentTeamColor)
+void AParentBuilding::Initialize(TSubclassOf<AParentBuilding> Subclass, FTransform Transform, int32 ParentTeamNumber, FLinearColor ParentTeamColor)
 {
 	const AParentBuilding* DefaultSubclassObject = Cast<AParentBuilding>(Subclass->GetDefaultObject(true));
 	const FBuilding* BuildingRowData = DataTableSubsystem->GetRowData(DefaultSubclassObject->BuildingName);
@@ -85,7 +85,7 @@ void AParentBuilding::SpawnUnit(UBoxComponent* UnitSpawnPoint)
 		nullptr,
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
 	);
-	NewUnit->Init(
+	NewUnit->Initialize(
 		UnitBeingProduced,
 		UnitSpawnPoint->GetComponentTransform(),
 		this->TeamNumber,

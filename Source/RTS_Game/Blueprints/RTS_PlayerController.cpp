@@ -107,7 +107,7 @@ void ARTS_PlayerController::SpawnBuilding(const FTransform Transform, const TSub
 		nullptr,
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
 	);
-	NewBuilding->Init(
+	NewBuilding->Initialize(
 		Subclass,
 		Transform,
 		this->TeamNumber,
@@ -125,7 +125,7 @@ void ARTS_PlayerController::SpawnUnit(const FTransform Transform, const TSubclas
 		nullptr,
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
 	);
-	NewUnit->Init(
+	NewUnit->Initialize(
 		Subclass,
 		Transform,
 		this->TeamNumber,
