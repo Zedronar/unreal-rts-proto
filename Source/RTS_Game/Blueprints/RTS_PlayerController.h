@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../DataTableSubsystem.h"
 #include "../Units/ParentUnit.h"
 #include "../Buildings/BuildingData.h"
 #include "../Buildings/ParentBuilding.h"
-#include "../Buildings/BuildingData.h"
 #include "I_RTS.h"
 
 #include "CoreMinimal.h"
@@ -41,10 +41,6 @@ protected:
 
 private:
 	bool DeductResourceCost(const int32 Cost);
-
-	FBuilding* GetBuildingRowData(EBuildingNames BuildingName) const;
-
-	FUnit* GetUnitRowData(EUnitNames UnitName) const;
 
 	float GetRandomFloatWithGap() const;
 
@@ -96,4 +92,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AParentBuilding* SelectedBuilding;
+
+private:
+	UPROPERTY()
+	UDataTableSubsystem* DataTableSubsystem = nullptr;
 };

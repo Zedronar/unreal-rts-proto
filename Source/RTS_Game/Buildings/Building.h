@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../Units/ParentUnit.h"
-
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "UObject/NoExportTypes.h"
 #include "Building.generated.h"
+
+// Forward declaration
+class AParentUnit;
 
 /**
  *

@@ -4,28 +4,9 @@ ARTS_PlayerController::ARTS_PlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	if (GetWorld())
+	if (GetWorld() && GetGameInstance())
 	{
-		// DataTable - Load
-		static ConstructorHelpers::FObjectFinder<UDataTable> BuildingDataObject(TEXT("DataTable'/Game/Buildings/BuildingsDataTable.BuildingsDataTable'"));
-		if (BuildingDataObject.Succeeded())
-		{
-			BuildingData = BuildingDataObject.Object;
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BUILDINGS DATATABLE NOT FOUND"));
-		}
-
-		static ConstructorHelpers::FObjectFinder<UDataTable> UnitDataObject(TEXT("DataTable'/Game/Units/UnitsDataTable.UnitsDataTable'"));
-		if (UnitDataObject.Succeeded())
-		{
-			UnitData = UnitDataObject.Object;
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UNITS DATATABLE NOT FOUND"));
-		}
+		this->DataTableSubsystem = GetGameInstance()->GetSubsystem<UDataTableSubsystem>();
 	}
 }
 
@@ -49,7 +30,7 @@ void ARTS_PlayerController::ServerAddUnitToQueueNetwork_Implementation(AParentBu
 {
 	// Deduct cost
 	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(Unit->GetDefaultObject(true));
-	const FUnit* UnitRowData = GetUnitRowData(DefaultSubclassObject->UnitName);
+	const FUnit* UnitRowData = this->DataTableSubsystem->GetUnitRowData(DefaultSubclassObject->UnitName);
 
 	bool Deducted = DeductResourceCost(UnitRowData->Cost);
 	if (!Deducted)
@@ -86,7 +67,7 @@ void ARTS_PlayerController::StartBuildingConstruction_Implementation(TSubclassOf
 
 	// Deduct cost
 	const AParentBuilding* DefaultSubclassObject = Cast<AParentBuilding>(Building->GetDefaultObject(true));
-	const FBuilding* BuildingRowData = GetBuildingRowData(DefaultSubclassObject->BuildingName);
+	const FBuilding* BuildingRowData = this->DataTableSubsystem->GetBuildingRowData(DefaultSubclassObject->BuildingName);
 
 	bool Deducted = DeductResourceCost(BuildingRowData->Cost);
 	if (!Deducted)
@@ -145,35 +126,6 @@ void ARTS_PlayerController::ConstructBuildingTick(UBoxComponent* StartingBuildin
 	this->ConstructionProgress = 0.0f;
 }
 
-FBuilding* ARTS_PlayerController::GetBuildingRowData(EBuildingNames BuildingName) const
-{
-	const TEnumAsByte EnumVar = BuildingName;
-	FText MyEnumValueText;
-	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
-	FString StrBuildingName =  MyEnumValueText.ToString();
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("ParentBuilding - " + StrBuildingName));
-	}
-
-	// DataTable - Read data
-	static const FString ContextString(StrBuildingName);
-	return BuildingData->FindRow<FBuilding>(FName(StrBuildingName), ContextString, true);
-}
-
-FUnit* ARTS_PlayerController::GetUnitRowData(EUnitNames UnitName) const
-{
-	const TEnumAsByte EnumVar = UnitName;
-	FText MyEnumValueText;
-	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
-	FString StrUnitName =  MyEnumValueText.ToString();
-
-	// DataTable - Read data
-	static const FString ContextString(StrUnitName);
-	return UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
-}
-
 float ARTS_PlayerController::GetRandomFloatWithGap() const
 {
 	const float Random1 = FMath::RandRange(-400.0f, -100.0f);
@@ -187,7 +139,7 @@ float ARTS_PlayerController::GetRandomFloatWithGap() const
 void ARTS_PlayerController::SpawnBuilding(const FTransform* NewTransform)
 {
 	const AParentBuilding* DefaultSubclassObject = Cast<AParentBuilding>(BuildingBeingConstructed->GetDefaultObject(true));
-	const FBuilding* BuildingRowData = GetBuildingRowData(DefaultSubclassObject->BuildingName);
+	const FBuilding* BuildingRowData = this->DataTableSubsystem->GetBuildingRowData(DefaultSubclassObject->BuildingName);
 	AParentBuilding* NewBuilding = GetWorld()->SpawnActorDeferred<AParentBuilding>(
 		this->BuildingBeingConstructed,
 		*NewTransform,

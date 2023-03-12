@@ -1,47 +1,18 @@
 #include "ParentBuilding.h"
 
-
 AParentBuilding::AParentBuilding()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	if (GetWorld())
+	if (GetWorld() && GetGameInstance())
 	{
-		// DataTable - Load
-		static ConstructorHelpers::FObjectFinder<UDataTable> BuildingDataObject(TEXT("DataTable'/Game/Buildings/BuildingsDataTable.BuildingsDataTable'"));
-		if (BuildingDataObject.Succeeded())
-		{
-			BuildingData = BuildingDataObject.Object;
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BUILDINGS DATATABLE NOT FOUND"));
-		}
-
-		static ConstructorHelpers::FObjectFinder<UDataTable> UnitDataObject(TEXT("DataTable'/Game/Units/UnitsDataTable.UnitsDataTable'"));
-		if (UnitDataObject.Succeeded())
-		{
-			UnitData = UnitDataObject.Object;
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UNITS DATATABLE NOT FOUND"));
-		}
+		this->DataTableSubsystem = GetGameInstance()->GetSubsystem<UDataTableSubsystem>();
 	}
 }
 
 void AParentBuilding::BeginPlay()
 {
 	Super::BeginPlay();
-
-	const FBuilding* BuildingRowData = GetBuildingRowData();
-	this->Cost = BuildingRowData->Cost;
-	this->BuildTime = BuildingRowData->BuildTime;
-	this->Health = BuildingRowData->Health;
-	this->Level = BuildingRowData->InitialLevel;
-	this->LevelUpCost = BuildingRowData->LevelUpCost;
-	this->LevelUpTimeNeeded = BuildingRowData->LevelUpTime;
-	this->BuildableUnits = BuildingRowData->BuildableUnits;
 }
 
 bool AParentBuilding::IsUnitProductionComplete()
@@ -71,7 +42,9 @@ void AParentBuilding::StartProducingNextUnit()
 	// Get the first unit in the queue
 	this->UnitBeingProduced = this->UnitProductionQueue[0];
 
-	const FUnit* UnitRowData = GetUnitRowData();
+	// Get data from DataTable
+	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
+	const FUnit* UnitRowData = this->DataTableSubsystem->GetUnitRowData(DefaultSubclassObject->UnitName);
 	
 	// Get default build time from unit being produced
 	ProductionTimeNeeded = UnitRowData->BuildTime;
@@ -85,7 +58,8 @@ void AParentBuilding::StartProducingNextUnit()
 
 void AParentBuilding::SpawnUnit(UBoxComponent* UnitSpawnPoint)
 {
-	const FUnit* UnitRowData = GetUnitRowData();
+	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
+	const FUnit* UnitRowData = DataTableSubsystem->GetUnitRowData(DefaultSubclassObject->UnitName);
 
 	// Spawn unit
 	AParentUnit* NewUnit = GetWorld()->SpawnActorDeferred<AParentUnit>(
@@ -177,35 +151,4 @@ void AParentBuilding::SetupTeamColor(UStaticMeshComponent* StaticMeshComponent)
 void AParentBuilding::AddUnitToQueue(TSubclassOf<AParentUnit> Unit)
 {
 	this->UnitProductionQueue.Add(Unit);
-}
-
-FBuilding* AParentBuilding::GetBuildingRowData() const
-{
-	const TEnumAsByte EnumVar = this->BuildingName;
-	FText MyEnumValueText;
-	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
-	FString StrBuildingName =  MyEnumValueText.ToString();
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("ParentBuilding - " + StrBuildingName));
-	}
-
-	// DataTable - Read data
-	static const FString ContextString(StrBuildingName);
-	return BuildingData->FindRow<FBuilding>(FName(StrBuildingName), ContextString, true);
-}
-
-FUnit* AParentBuilding::GetUnitRowData() const
-{
-	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
-
-	const TEnumAsByte EnumVar = DefaultSubclassObject->UnitName;
-	FText MyEnumValueText;
-	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
-	FString StrUnitName =  MyEnumValueText.ToString();
-
-	// DataTable - Read data
-	static const FString ContextString(StrUnitName);
-	return UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
 }

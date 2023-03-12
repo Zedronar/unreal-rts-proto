@@ -1,11 +1,12 @@
 #pragma once
 
+#include "../DataTableSubsystem.h"
 #include "../Units/ParentUnit.h"
+#include "EBuildingNames.h"
 #include "BuildingData.h"
 
 #include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
-#include "EBuildingNames.h"
 #include "GameFramework/Actor.h"
 #include "ParentBuilding.generated.h"
 
@@ -42,11 +43,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SetupTeamColor(UStaticMeshComponent* StaticMeshComponent);
-
-private:
-	FBuilding* GetBuildingRowData() const;
-
-	FUnit* GetUnitRowData() const;
 
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
@@ -120,4 +116,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
 	UDataTable* UnitData;
+
+private:
+	UPROPERTY()
+	UDataTableSubsystem* DataTableSubsystem = nullptr;
 };

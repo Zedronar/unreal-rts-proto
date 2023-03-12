@@ -1,9 +1,10 @@
 #pragma once
 
+#include "../DataTableSubsystem.h"
 #include "UnitData.h"
+#include "EUnitNames.h"
 
 #include "CoreMinimal.h"
-#include "EUnitNames.h"
 #include "GameFramework/Character.h"
 #include "ParentUnit.generated.h"
 
@@ -23,9 +24,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SetupTeamColor();
-
-private:
-	bool GetUnitRowData(const FUnit*& UnitRowData) const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
@@ -64,6 +62,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FromDataTable", meta = (ExposeOnSpawn="true"))
 	FString Description = "PLACEHOLDER";
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
-	UDataTable* UnitData;
+private:
+	UPROPERTY()
+	UDataTableSubsystem* DataTableSubsystem = nullptr;
 };
