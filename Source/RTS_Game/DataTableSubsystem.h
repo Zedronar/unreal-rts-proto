@@ -24,9 +24,9 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	FBuilding* GetBuildingRowData(EBuildingNames BuildingName) const;
+	FBuilding* GetRowData(EBuildingNames BuildingName) const;
 
-	FUnit* GetUnitRowData(EUnitNames UnitName) const;
+	FUnit* GetRowData(EUnitNames UnitName) const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

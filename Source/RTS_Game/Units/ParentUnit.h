@@ -15,10 +15,13 @@ class RTS_GAME_API AParentUnit : public ACharacter
 
 public:
 	AParentUnit();
-	
+
+	void Init(TSubclassOf<AParentUnit> Subclass, FTransform Transform, int32 TeamNumber, FLinearColor TeamColor, int32 StartingLevel = 1);
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
 protected:
 	virtual void BeginPlay() override;
 

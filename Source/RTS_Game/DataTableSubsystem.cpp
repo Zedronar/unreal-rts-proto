@@ -40,7 +40,7 @@ void UDataTableSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-FBuilding* UDataTableSubsystem::GetBuildingRowData(EBuildingNames BuildingName) const
+FBuilding* UDataTableSubsystem::GetRowData(EBuildingNames BuildingName) const
 {
 	const TEnumAsByte EnumVar = BuildingName;
 	FText MyEnumValueText;
@@ -57,7 +57,7 @@ FBuilding* UDataTableSubsystem::GetBuildingRowData(EBuildingNames BuildingName) 
 	return BuildingData->FindRow<FBuilding>(FName(StrBuildingName), ContextString, true);
 }
 
-FUnit* UDataTableSubsystem::GetUnitRowData(EUnitNames UnitName) const
+FUnit* UDataTableSubsystem::GetRowData(EUnitNames UnitName) const
 {
 	const TEnumAsByte EnumVar = UnitName;
 	FText MyEnumValueText;

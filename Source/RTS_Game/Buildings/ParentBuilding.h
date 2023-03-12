@@ -17,6 +17,8 @@ class RTS_GAME_API AParentBuilding : public AActor
 public:	
 	AParentBuilding();
 
+	void Init(TSubclassOf<AParentBuilding> Subclass, FTransform Transform, int32 TeamNumber, FLinearColor TeamColor);
+
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)

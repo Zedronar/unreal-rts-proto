@@ -10,6 +10,25 @@ AParentBuilding::AParentBuilding()
 	}
 }
 
+void AParentBuilding::Init(TSubclassOf<AParentBuilding> Subclass, FTransform Transform, int32 ParentTeamNumber, FLinearColor ParentTeamColor)
+{
+	const AParentBuilding* DefaultSubclassObject = Cast<AParentBuilding>(Subclass->GetDefaultObject(true));
+	const FBuilding* BuildingRowData = DataTableSubsystem->GetRowData(DefaultSubclassObject->BuildingName);
+
+	this->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
+	this->TeamNumber = ParentTeamNumber;
+	this->TeamColor = ParentTeamColor;
+	this->Cost = BuildingRowData->Cost;
+	this->BuildTime = BuildingRowData->BuildTime;
+	this->Health = BuildingRowData->Health;
+	this->Level = BuildingRowData->InitialLevel;
+	this->LevelUpCost = BuildingRowData->LevelUpCost;
+	this->LevelUpTimeNeeded = BuildingRowData->LevelUpTime;
+	this->BuildableUnits = BuildingRowData->BuildableUnits;
+	this->FinishSpawning(Transform);
+}
+
+
 void AParentBuilding::BeginPlay()
 {
 	Super::BeginPlay();
@@ -44,7 +63,7 @@ void AParentBuilding::StartProducingNextUnit()
 
 	// Get data from DataTable
 	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
-	const FUnit* UnitRowData = this->DataTableSubsystem->GetUnitRowData(DefaultSubclassObject->UnitName);
+	const FUnit* UnitRowData = this->DataTableSubsystem->GetRowData(DefaultSubclassObject->UnitName);
 	
 	// Get default build time from unit being produced
 	ProductionTimeNeeded = UnitRowData->BuildTime;
@@ -58,27 +77,21 @@ void AParentBuilding::StartProducingNextUnit()
 
 void AParentBuilding::SpawnUnit(UBoxComponent* UnitSpawnPoint)
 {
-	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(UnitBeingProduced->GetDefaultObject(true));
-	const FUnit* UnitRowData = DataTableSubsystem->GetUnitRowData(DefaultSubclassObject->UnitName);
-
-	// Spawn unit
+	// Spawn unit deferred
 	AParentUnit* NewUnit = GetWorld()->SpawnActorDeferred<AParentUnit>(
 		UnitBeingProduced,
 		UnitSpawnPoint->GetComponentTransform(),
 		this,
 		nullptr,
-		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-	NewUnit->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
-	NewUnit->TeamNumber = this->TeamNumber;
-	NewUnit->TeamColor = this->TeamColor;
-	NewUnit->Level = this->Level; // Building level is carried over to units
-	NewUnit->Speed = UnitRowData->Speed;
-	NewUnit->Cost = UnitRowData->Cost;
-	NewUnit->BuildTime = UnitRowData->BuildTime;
-	NewUnit->Health = UnitRowData->Health;
-	NewUnit->Damage = UnitRowData->Damage;
-	NewUnit->Description = UnitRowData->Description;
-	NewUnit->FinishSpawning(UnitSpawnPoint->GetComponentTransform());
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
+	);
+	NewUnit->Init(
+		UnitBeingProduced,
+		UnitSpawnPoint->GetComponentTransform(),
+		this->TeamNumber,
+		this->TeamColor,
+		this->Level // Building level is carried over to units
+	);
 
 	// Reset production
 	this->IsProducingUnit = false;

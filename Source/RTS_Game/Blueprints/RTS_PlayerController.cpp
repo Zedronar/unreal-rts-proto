@@ -30,7 +30,7 @@ void ARTS_PlayerController::ServerAddUnitToQueueNetwork_Implementation(AParentBu
 {
 	// Deduct cost
 	const AParentUnit* DefaultSubclassObject = Cast<AParentUnit>(Unit->GetDefaultObject(true));
-	const FUnit* UnitRowData = this->DataTableSubsystem->GetUnitRowData(DefaultSubclassObject->UnitName);
+	const FUnit* UnitRowData = this->DataTableSubsystem->GetRowData(DefaultSubclassObject->UnitName);
 
 	bool Deducted = DeductResourceCost(UnitRowData->Cost);
 	if (!Deducted)
@@ -67,7 +67,7 @@ void ARTS_PlayerController::StartBuildingConstruction_Implementation(TSubclassOf
 
 	// Deduct cost
 	const AParentBuilding* DefaultSubclassObject = Cast<AParentBuilding>(Building->GetDefaultObject(true));
-	const FBuilding* BuildingRowData = this->DataTableSubsystem->GetBuildingRowData(DefaultSubclassObject->BuildingName);
+	const FBuilding* BuildingRowData = this->DataTableSubsystem->GetRowData(DefaultSubclassObject->BuildingName);
 
 	bool Deducted = DeductResourceCost(BuildingRowData->Cost);
 	if (!Deducted)
@@ -97,56 +97,40 @@ FTransform ARTS_PlayerController::GetNewBuildingTransform(const UBoxComponent* S
 	);
 }
 
-// TODO: Move to ParentBuilding
 void ARTS_PlayerController::SpawnBuilding(const FTransform Transform, const TSubclassOf<AParentBuilding> Subclass)
 {
-	const AParentBuilding* DefaultUnitSubclassObject = Cast<AParentBuilding>(Subclass->GetDefaultObject(true));
-	const FBuilding* BuildingRowData = this->DataTableSubsystem->GetBuildingRowData(DefaultUnitSubclassObject->BuildingName);
-
 	// Spawn building deferred
 	AParentBuilding* NewBuilding = GetWorld()->SpawnActorDeferred<AParentBuilding>(
 		Subclass,
 		Transform,
 		this,
 		nullptr,
-		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-	NewBuilding->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
-	NewBuilding->TeamNumber = this->TeamNumber;
-	NewBuilding->TeamColor = this->TeamColor;
-	NewBuilding->Cost = BuildingRowData->Cost;
-	NewBuilding->BuildTime = BuildingRowData->BuildTime;
-	NewBuilding->Health = BuildingRowData->Health;
-	NewBuilding->Level = BuildingRowData->InitialLevel;
-	NewBuilding->LevelUpCost = BuildingRowData->LevelUpCost;
-	NewBuilding->LevelUpTimeNeeded = BuildingRowData->LevelUpTime;
-	NewBuilding->BuildableUnits = BuildingRowData->BuildableUnits;
-	NewBuilding->FinishSpawning(Transform);
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
+	);
+	NewBuilding->Init(
+		Subclass,
+		Transform,
+		this->TeamNumber,
+		this->TeamColor
+	);
 }
 
-// TODO: Move to ParentUnit
 void ARTS_PlayerController::SpawnUnit(const FTransform Transform, const TSubclassOf<AParentUnit> Subclass, int32 StartingUnitLevel)
 {
-	const AParentUnit* DefaultUnitSubclassObject = Cast<AParentUnit>(Subclass->GetDefaultObject(true));
-	const FUnit* UnitRowData = DataTableSubsystem->GetUnitRowData(DefaultUnitSubclassObject->UnitName);
-
 	// Spawn unit deferred
 	AParentUnit* NewUnit = GetWorld()->SpawnActorDeferred<AParentUnit>(
 		Subclass,
 		Transform,
 		this,
 		nullptr,
-		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-	NewUnit->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
-	NewUnit->TeamNumber = this->TeamNumber;
-	NewUnit->TeamColor = this->TeamColor;
-	NewUnit->Level = StartingUnitLevel; // Building level is carried over to units
-	NewUnit->Speed = UnitRowData->Speed;
-	NewUnit->Cost = UnitRowData->Cost;
-	NewUnit->BuildTime = UnitRowData->BuildTime;
-	NewUnit->Health = UnitRowData->Health;
-	NewUnit->Damage = UnitRowData->Damage;
-	NewUnit->Description = UnitRowData->Description;
-	NewUnit->FinishSpawning(Transform);
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
+	);
+	NewUnit->Init(
+		Subclass,
+		Transform,
+		this->TeamNumber,
+		this->TeamColor
+	);
 }
 
 void ARTS_PlayerController::SetupPlayerStart2_Implementation(APlayerStartCamp* PlayerStartCamp, int32 PlayerTeamNumber, FLinearColor PlayerTeamColor)
@@ -166,13 +150,6 @@ void ARTS_PlayerController::SetupPlayerStart2_Implementation(APlayerStartCamp* P
 	SpawnBuilding(Transform, InitialBuildingClass);
 
 	// Setup starting units
-	/*const FTransform Transform_1 = this->StartCamp->UnitStartA->GetComponentTransform();
-	SpawnUnit(Transform_1, InitialUnitClass, 1);
-	const FTransform Transform_2 = this->StartCamp->UnitStartB->GetComponentTransform();
-	SpawnUnit(Transform_2, InitialUnitClass, 1);
-	const FTransform Transform_3 = this->StartCamp->UnitStartC->GetComponentTransform();
-	SpawnUnit(Transform_3, InitialUnitClass, 1);*/
-
 	for (const UBoxComponent* UnitBoxComponent : this->StartCamp->StartingUnits)
 	{
 		const FTransform UnitTransform = UnitBoxComponent->GetComponentTransform();
