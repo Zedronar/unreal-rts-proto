@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "PlayerStartCamp.generated.h"
@@ -9,16 +10,25 @@ class RTS_GAME_API APlayerStartCamp : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
+public:
 	APlayerStartCamp();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	virtual void BeginPlay() override;
+	
+public:	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBoxComponent* UnitStartA;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBoxComponent* UnitStartB;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBoxComponent* UnitStartC;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* Root;
 };

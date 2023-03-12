@@ -36,4 +36,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ServerAddUnitToQueue(AParentBuilding* Building, TSubclassOf<AParentUnit> Unit);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetupPlayerStart2(APlayerStartCamp* PlayerStartCamp, int32 PlayerTeamNumber, FLinearColor PlayerTeamColor);
 };

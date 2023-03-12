@@ -6,7 +6,7 @@ UDataTableSubsystem::UDataTableSubsystem()
 	if (UObject::GetWorld())
 	{
 		// DataTable - Load
-		ConstructorHelpers::FObjectFinder<UDataTable> BuildingDataObject(TEXT("DataTable'/Game/Buildings/BuildingsDataTable.BuildingsDataTable'"));
+		const ConstructorHelpers::FObjectFinder<UDataTable> BuildingDataObject(TEXT("DataTable'/Game/Buildings/BuildingsDataTable.BuildingsDataTable'"));
 		if (BuildingDataObject.Succeeded())
 		{
 			BuildingData = BuildingDataObject.Object;
@@ -16,7 +16,7 @@ UDataTableSubsystem::UDataTableSubsystem()
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("BUILDINGS DATATABLE NOT FOUND"));
 		}
 
-		ConstructorHelpers::FObjectFinder<UDataTable> UnitDataObject(TEXT("DataTable'/Game/Units/UnitsDataTable.UnitsDataTable'"));
+		const ConstructorHelpers::FObjectFinder<UDataTable> UnitDataObject(TEXT("DataTable'/Game/Units/UnitsDataTable.UnitsDataTable'"));
 		if (UnitDataObject.Succeeded())
 		{
 			UnitData = UnitDataObject.Object;
@@ -52,7 +52,7 @@ FBuilding* UDataTableSubsystem::GetBuildingRowData(EBuildingNames BuildingName) 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("ParentBuilding - " + StrBuildingName));
 	}
 
-	// Read data from DataTable
+	// Read data from Buildings DataTable
 	static const FString ContextString(StrBuildingName);
 	return BuildingData->FindRow<FBuilding>(FName(StrBuildingName), ContextString, true);
 }
@@ -64,7 +64,7 @@ FUnit* UDataTableSubsystem::GetUnitRowData(EUnitNames UnitName) const
 	UEnum::GetDisplayValueAsText(EnumVar, MyEnumValueText);
 	FString StrUnitName =  MyEnumValueText.ToString();
 
-	// DataTable - Read data
+	// Read data from Units DataTable
 	static const FString ContextString(StrUnitName);
 	return UnitData->FindRow<FUnit>(FName(StrUnitName), ContextString, true);
 }

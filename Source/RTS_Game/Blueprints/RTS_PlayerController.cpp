@@ -96,6 +96,18 @@ void ARTS_PlayerController::GetNewBuildingTransform(const UBoxComponent* Startin
 	);
 }
 
+void ARTS_PlayerController::SetupPlayerStart2_Implementation(APlayerStartCamp* PlayerStartCamp, int32 PlayerTeamNumber, FLinearColor PlayerTeamColor)
+{
+	if (!this->HasAuthority())
+	{
+		return;
+	}
+
+	this->TeamNumber = PlayerTeamNumber;
+	this->TeamColor = PlayerTeamColor;
+
+}
+
 void ARTS_PlayerController::ConstructBuildingTick(UBoxComponent* StartingBuildingSpawnPoint)
 {
 	if (!this->IsConstructingBuilding)

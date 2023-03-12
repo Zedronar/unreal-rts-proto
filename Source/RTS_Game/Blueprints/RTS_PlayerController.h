@@ -2,8 +2,8 @@
 
 #include "../DataTableSubsystem.h"
 #include "../Units/ParentUnit.h"
-#include "../Buildings/BuildingData.h"
 #include "../Buildings/ParentBuilding.h"
+#include "PlayerStartCamp.h"
 #include "I_RTS.h"
 
 #include "CoreMinimal.h"
@@ -34,6 +34,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void StartBuildingConstruction(TSubclassOf<AParentBuilding> Building);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetupPlayerStart2(APlayerStartCamp* PlayerStartCamp, int32 PlayerTeamNumber, FLinearColor PlayerTeamColor);
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -69,14 +72,8 @@ protected:
 	TSubclassOf<AParentBuilding> BuildingBeingConstructed;
 	#pragma endregion BuildingConstruction
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
-	UDataTable* BuildingData;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
-	UDataTable* UnitData;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
-	int32 ResourceAmount = 0;
+	int32 ResourceAmount = 1000; // For testing purposes
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor TeamColor;

@@ -3,7 +3,6 @@
 #include "../DataTableSubsystem.h"
 #include "../Units/ParentUnit.h"
 #include "EBuildingNames.h"
-#include "BuildingData.h"
 
 #include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
@@ -110,13 +109,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FromDataTable", meta = (ExposeOnSpawn="true"))
 	TArray<TSubclassOf<AParentUnit>> BuildableUnits;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
-	UDataTable* BuildingData;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default", meta = (AllowPrivateAccess = "true"))
-	UDataTable* UnitData;
-
 private:
 	UPROPERTY()
 	UDataTableSubsystem* DataTableSubsystem = nullptr;
