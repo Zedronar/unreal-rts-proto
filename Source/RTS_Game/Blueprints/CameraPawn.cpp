@@ -1,9 +1,20 @@
 #include "CameraPawn.h"
-#include "Kismet/GameplayStatics.h"
 
 ACameraPawn::ACameraPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	SetRootComponent(Root);
+
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(Root);
+
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetRelativeLocationAndRotation(
+		FVector(0.0f, 0.0f, 0.0f),
+		FRotator(-70.0f, 360.0f, 0.0f));
+	Camera->SetupAttachment(Root);
 }
 
 void ACameraPawn::BeginPlay()
