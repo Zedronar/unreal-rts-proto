@@ -2,6 +2,7 @@
 
 #include "../DataTableSubsystem.h"
 #include "../Units/ParentUnit.h"
+#include "../Interfaces/Tooltip.h"
 #include "EBuildingNames.h"
 
 #include "Components/BoxComponent.h"
@@ -10,7 +11,7 @@
 #include "ParentBuilding.generated.h"
 
 UCLASS()
-class RTS_GAME_API AParentBuilding : public AActor
+class RTS_GAME_API AParentBuilding : public AActor, public ITooltip
 {
 	GENERATED_BODY()
 	

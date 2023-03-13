@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Interfaces/Resource.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ResourceNode.generated.h"
@@ -14,6 +16,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
