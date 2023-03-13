@@ -60,4 +60,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float GetConstructionProgress();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void HighlightUnit();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UnHighlightUnit();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UnitMoveCommand(FVector Location);
 };
