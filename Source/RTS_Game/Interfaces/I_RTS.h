@@ -39,4 +39,25 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetupPlayerStart2(APlayerStartCamp* PlayerStartCamp, int32 PlayerTeamNumber, FLinearColor PlayerTeamColor);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void MarqueePressed();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void MarqueeHeld();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void MarqueeReleased();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SelectThis();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void DeselectThis();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetIsConstructingBuilding();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetConstructionProgress();
 };
